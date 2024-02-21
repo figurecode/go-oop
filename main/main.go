@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
-import "delivery"
+import (
+	"circular"
+	"delivery"
+	"fmt"
+)
 
 //Метод представляет собой функцию, привязанную к конкретному типу.
 //Методы позволяют связывать поведение и данные типа в самом типе,
@@ -32,10 +35,24 @@ func main() {
 
 	fmt.Println(s)
 
+	// ***************************
 	var state delivery.State = "new"
 
 	err := HandleMsgDeliveryState(state)
 	if err != nil {
 		fmt.Println(err)
+	}
+
+	// ***************************
+	buf := circular.NewCircularBuffer(4)
+	for i := 0; i < 6; i++ {
+		if i > 0 {
+			fmt.Println("Добавляем в буфер: ", i)
+
+			buf.AddValue(float64(i))
+		}
+
+		fmt.Printf("[%d]: %v\n", buf.GetCurrentSize(), buf.GetValues())
+		fmt.Println("Буфер: ", buf)
 	}
 }
