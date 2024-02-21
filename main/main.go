@@ -18,14 +18,16 @@ func (m MyType) String() string {
 	return fmt.Sprintf("MyType: %d", m)
 }
 
-func HandleMsgDeliveryState(status delivery.State) error {
+func HandleMsgDeliveryState(status *delivery.State) {
 	if !status.IsValid() {
-		return fmt.Errorf("status: invalid")
+		status.Log("status: [" + status.V + "] invalid")
+
+		return
 	}
 
-	// код обработки статуса
+	status.Log("status: [" + status.V + "]  OK")
 
-	return nil
+	// код обработки статуса
 }
 
 func main() {
@@ -36,12 +38,16 @@ func main() {
 	fmt.Println(s)
 
 	// ***************************
-	var state delivery.State = "new"
-
-	err := HandleMsgDeliveryState(state)
-	if err != nil {
-		fmt.Println(err)
+	var state = delivery.State{
+		V:   "new",
+		Log: func(m string) { fmt.Println("LOG: ", m) },
 	}
+
+	HandleMsgDeliveryState(&state)
+
+	state.V = "pending"
+
+	HandleMsgDeliveryState(&state)
 
 	// ***************************
 	buf := circular.NewCircularBuffer(4)

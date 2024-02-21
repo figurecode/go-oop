@@ -1,19 +1,22 @@
 package delivery
 
-// State — статус доставки и обработки сообщения.
-type State string
+// State — структура статуса доставки и обработки сообщения.
+type State struct {
+	V   string
+	Log func(mes string)
+}
 
 // Возможные значения перечисления DeliveryState.
 const (
-	StatePending   State = "pending"      // сообщение отправлено
-	StateAck       State = "acknowledged" // сообщение получено
-	StateProcessed State = "processed"    // сообщение обработано успешно
-	StateCanceled  State = "canceled"     // обработка сообщения прервана
+	StatePending   string = "pending"      // сообщение отправлено
+	StateAck       string = "acknowledged" // сообщение получено
+	StateProcessed string = "processed"    // сообщение обработано успешно
+	StateCanceled  string = "canceled"     // обработка сообщения прервана
 )
 
 // IsValid проверяет валидность текущего значения типа State
 func (s State) IsValid() bool {
-	switch s {
+	switch s.V {
 	case StatePending, StateAck, StateProcessed, StateCanceled:
 		return true
 	default:
@@ -23,5 +26,5 @@ func (s State) IsValid() bool {
 
 // String возвращает строковое представление типа State
 func (s State) String() string {
-	return string(s)
+	return string(s.V)
 }
