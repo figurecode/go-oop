@@ -30,6 +30,11 @@ func HandleMsgDeliveryState(status *delivery.State) {
 	// код обработки статуса
 }
 
+// HandleBuffer передача метода как аргумента функции
+func HandleBuffer(num float64, add func(float64)) {
+	add(num)
+}
+
 func main() {
 	var m MyType = 5
 
@@ -59,6 +64,16 @@ func main() {
 		}
 
 		fmt.Printf("[%d]: %v\n", buf.GetCurrentSize(), buf.GetValues())
-		fmt.Println("Буфер: ", buf)
 	}
+
+	fmt.Println("Буфер: ", buf)
+
+	for i := 4; i < 8; i++ {
+		HandleBuffer(float64(i), buf.AddValue)
+	}
+
+	fmt.Println("Буфер: ", buf)
+
+	// ***************************
+
 }
