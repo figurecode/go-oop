@@ -4,6 +4,8 @@ import (
 	"circular"
 	"delivery"
 	"fmt"
+	"time"
+	"timer"
 )
 
 //Метод представляет собой функцию, привязанную к конкретному типу.
@@ -73,6 +75,22 @@ func main() {
 	}
 
 	fmt.Println("Буфер: ", buf)
+
+	// ***************************
+
+	sw := timer.Stopwatch{}
+	sw.Start()
+
+	time.Sleep(1 * time.Second)
+	sw.SaveSplit()
+
+	time.Sleep(500 * time.Millisecond)
+	sw.SaveSplit()
+
+	time.Sleep(300 * time.Millisecond)
+	sw.SaveSplit()
+
+	fmt.Println(sw.GetResults())
 
 	// ***************************
 
