@@ -2,16 +2,30 @@ package embedded
 
 import "fmt"
 
+// В структуру может быть встроен указатель на тип. Рассмотрим на примере:
+//    type Student struct {
+//        *Person
+//        Group  string
+//    }
+// Внешние отличия небольшие, но встраивание указателя может быть удобно,
+// если вы встраиваете в вашу структуру какую-то большую структуру и затем передаёте её по значению.
+// Это может повысить производительность за счёт того, что копируется не вся структура,
+// а только указатель на неё. Важно отметить, что в таком случае встроенная структура может быть изменена.
+
 type Student struct {
-	Person
+	*Person
 	Group string
 }
 
-func NewStudent(name string, year int, group string) Student {
+func NewStudent(person *Person, group string) Student {
 	return Student{
-		Person: NewPerson(name, year),
+		Person: person,
 		Group:  group,
 	}
+}
+
+func ChangeName(s Student, name string) {
+	s.Name = name
 }
 
 func (s Student) String() string {
