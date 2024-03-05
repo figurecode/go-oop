@@ -107,4 +107,9 @@ func main() {
 
 	// ***************************
 
+	extBuffer := circular.NewExtCircularBuffer(5)
+	extBuffer.AddValues(1, 2, 3, 4, 5)
+	fmt.Printf("[%d]: %v\n", extBuffer.GetCurrentSize(), extBuffer.GetValues())
+
+	// ***************************
 }
