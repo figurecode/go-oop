@@ -95,11 +95,15 @@ func main() {
 
 	// ***************************
 
-	student := embedded.NewStudent("John Doe", 1980, "701")
+	student := embedded.NewStudent(&embedded.Person{Name: "John Doe", Year: 1980}, "701")
 	student.Print()
 
 	fmt.Println(student)
 	fmt.Println(student.Name, student.Year, student.Group)
+
+	embedded.ChangeName(student, "Teodor")
+
+	fmt.Println(student)
 
 	// ***************************
 
