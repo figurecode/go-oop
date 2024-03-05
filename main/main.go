@@ -3,6 +3,7 @@ package main
 import (
 	"circular"
 	"delivery"
+	"embedded"
 	"fmt"
 	"time"
 	"timer"
@@ -91,6 +92,14 @@ func main() {
 	sw.SaveSplit()
 
 	fmt.Println(sw.GetResults())
+
+	// ***************************
+
+	student := embedded.NewStudent("John Doe", 1980, "701")
+	student.Print()
+
+	fmt.Println(student)
+	fmt.Println(student.Name, student.Year, student.Group)
 
 	// ***************************
 
