@@ -5,6 +5,7 @@ import (
 	"delivery"
 	"embedded"
 	"fmt"
+	"loggerLevel"
 	"time"
 	"timer"
 )
@@ -112,4 +113,13 @@ func main() {
 	fmt.Printf("[%d]: %v\n", extBuffer.GetCurrentSize(), extBuffer.GetValues())
 
 	// ***************************
+
+	logger := loggerLevel.NewLogExtended()
+	logger.SetLogLevel(loggerLevel.LogLevelWarning)
+	logger.Infoln("Не должно напечататься")
+	logger.Warningln("Hello")
+	logger.Errorln("World")
+
+	// ***************************
+
 }
