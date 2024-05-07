@@ -8,6 +8,7 @@ replace (
 	embedded => ../embedded
 	loggerLevel => ../loggerLevel
 	timer => ../timer
+	timeError => ../timeError
 )
 
 require (

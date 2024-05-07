@@ -1,12 +1,17 @@
 package main
 
 import (
+	"bufio"
 	"circular"
 	"delivery"
 	"embedded"
+	"errors"
 	"fmt"
 	"loggerLevel"
+	"os"
+	"strings"
 	"time"
+	"timeError"
 	"timer"
 )
 
@@ -22,21 +27,73 @@ func (m MyType) String() string {
 	return fmt.Sprintf("MyType: %d", m)
 }
 
-func HandleMsgDeliveryState(status *delivery.State) {
+func HandleMsgDeliveryState(status *delivery.State) error {
 	if !status.IsValid() {
 		status.Log("status: [" + status.V + "] invalid")
 
-		return
+		return timeError.NewTimeError(fmt.Sprintf("status \"%v\" invalid", status.V))
 	}
 
 	status.Log("status: [" + status.V + "]  OK")
 
 	// код обработки статуса
+
+	return nil
 }
 
 // HandleBuffer передача метода как аргумента функции
 func HandleBuffer(num float64, add func(float64)) {
 	add(num)
+}
+
+// Функция должна находить все возможные ошибки за один вызов.
+// Результат должен содержать слайс ошибок, по которым строка не прошла проверку, или быть nil.
+
+type SliceError []error
+
+func (errs SliceError) Error() string {
+	var out string
+	for _, err := range errs {
+		out += err.Error() + ";"
+	}
+
+	return strings.TrimRight(out, ";")
+}
+
+func MyCheck(input string) error {
+	var (
+		err      SliceError
+		spaces   int
+		hasDigit bool
+	)
+	// Длина должна быть меньше 20 символов
+	if len([]rune(input)) >= 20 {
+		err = SliceError{errors.New("line is to long")}
+	}
+
+	for _, ch := range input {
+		if ch == ' ' {
+			spaces++
+		} else if ch >= '0' && ch <= '9' {
+			hasDigit = true
+		}
+	}
+
+	// Строка не должна содержать цифр
+	if hasDigit {
+		err = append(err, errors.New("found numbers"))
+	}
+
+	// Строка должна иметь два пробела
+	if spaces != 2 {
+		err = append(err, errors.New("no two spaces"))
+	}
+
+	if len(err) == 0 {
+		return nil
+	}
+
+	return err
 }
 
 func main() {
@@ -52,11 +109,15 @@ func main() {
 		Log: func(m string) { fmt.Println("LOG: ", m) },
 	}
 
-	HandleMsgDeliveryState(&state)
+	if err := HandleMsgDeliveryState(&state); err != nil {
+		fmt.Println(err)
+	}
 
 	state.V = "pending"
 
-	HandleMsgDeliveryState(&state)
+	if err := HandleMsgDeliveryState(&state); err != nil {
+		fmt.Println(err)
+	}
 
 	// ***************************
 	buf := circular.NewCircularBuffer(4)
@@ -122,4 +183,23 @@ func main() {
 
 	// ***************************
 
+	// Пример обработки ошибок. Ошибки складываются в слайс.
+	for {
+		fmt.Printf("Укажите строку (q для выхода): ")
+		reader := bufio.NewReader(os.Stdin)
+		ret, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		ret = strings.TrimRight(ret, "\n")
+		if ret == `q` {
+			break
+		}
+		if err = MyCheck(ret); err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(`Строка прошла проверку`)
+		}
+	}
 }
